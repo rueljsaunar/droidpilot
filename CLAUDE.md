@@ -98,16 +98,16 @@ Mark each item complete before committing a phase. All items in a phase must pas
 - [x] `CLAUDE.md` created ✅
 - [x] `docs/ARCHITECTURE.md` created ✅
 
-### Phase 1 – Accessibility Backend ☐
-- [ ] `AccessibilityService` declared in manifest with correct config
-- [ ] UI tree snapshot updated on window events
-- [ ] `SelectorEngine` resolves all `Selector` types against a serialized tree
-- [ ] `UiElement` actions: `click`, `longClick`, `setText`, `getText`, `exists`, `bounds`
-- [ ] `WaitStrategy`: event-driven wait + polling fallback; `wait()` and `waitGone()`
-- [ ] Gesture dispatch: `tap`, `swipe`, `drag`, `pinch` via `dispatchGesture`
-- [ ] Unit tests: selector engine against 5+ serialized UI tree fixtures
-- [ ] Instrumented test: drives `:sample-target` login flow end-to-end
-- [ ] `AccessibilityNodeInfo` leak Detekt rule active; no leaks in tests
+### Phase 1 – Accessibility Backend ✅
+- [x] `AccessibilityService` declared in manifest with correct config
+- [x] UI tree snapshot updated on window events
+- [x] `SelectorEngine` resolves all `Selector` types against a serialized tree
+- [x] `UiElement` actions: `click`, `longClick`, `setText`, `getText`, `exists`, `bounds`
+- [x] `WaitStrategy`: event-driven wait + polling fallback; `wait()` and `waitGone()`
+- [x] Gesture dispatch: `tap`, `swipe`, `drag`, `pinch` via `dispatchGesture`
+- [x] Unit tests: selector engine against 5+ serialized UI tree fixtures
+- [x] Instrumented test: drives `:sample-target` login flow end-to-end
+- [x] `AccessibilityNodeInfo` leak Detekt rule active; no leaks in tests
 
 ### Phase 2 – Python Bridge ☐
 - [ ] Chaquopy configured in `:script:python` `build.gradle.kts`

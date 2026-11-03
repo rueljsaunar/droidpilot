@@ -21,6 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "DroidPilot"
 
+include(":detekt-rules")
 include(":app")
 include(":core:automation")
 include(":backend:accessibility")

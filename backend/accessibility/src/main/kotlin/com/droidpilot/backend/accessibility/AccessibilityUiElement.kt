@@ -11,6 +11,8 @@ import com.droidpilot.core.automation.UiElement
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 
+private const val POLL_INTERVAL_MS = 100L
+
 internal class AccessibilityUiElement(
     private val selector: Selector,
     private val provider: SnapshotProvider,
@@ -74,7 +76,7 @@ internal class AccessibilityUiElement(
     override suspend fun wait(timeoutMs: Long): UiElement {
         val succeeded = withTimeoutOrNull(timeoutMs) {
             while (true) {
-                withTimeoutOrNull(100L) { provider.eventFlow.first() }
+                withTimeoutOrNull(POLL_INTERVAL_MS) { provider.eventFlow.first() }
                 if (exists()) return@withTimeoutOrNull
             }
         }
@@ -86,7 +88,7 @@ internal class AccessibilityUiElement(
         if (!exists()) return true
         return withTimeoutOrNull(timeoutMs) {
             while (true) {
-                withTimeoutOrNull(100L) { provider.eventFlow.first() }
+                withTimeoutOrNull(POLL_INTERVAL_MS) { provider.eventFlow.first() }
                 if (!exists()) return@withTimeoutOrNull
             }
         } != null

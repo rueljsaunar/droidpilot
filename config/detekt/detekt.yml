@@ -1,0 +1,18 @@
+droidpilot:
+  AccessibilityNodeInfoLeakRule:
+    active: true
+
+complexity:
+  # Backend implementation classes naturally expose many interface methods.
+  TooManyFunctions:
+    allowedFunctionsPerClass: 20
+  # Selector pattern-matching functions require higher cyclomatic complexity.
+  CyclomaticComplexMethod:
+    allowedComplexity: 20
+
+style:
+  MaxLineLength:
+    maxLineLength: 160
+  # Early-return style (guard clauses) is preferred over deep nesting.
+  ReturnCount:
+    max: 5

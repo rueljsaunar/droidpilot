@@ -18,6 +18,8 @@ import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+private const val TAP_DURATION_MS = 100L
+
 @Singleton
 class AccessibilityDeviceActions private constructor(
     private val context: Context?,
@@ -44,7 +46,7 @@ class AccessibilityDeviceActions private constructor(
     override suspend fun tap(x: Float, y: Float) {
         val path = Path().apply { moveTo(x, y) }
         dispatchGesture(GestureDescription.Builder()
-            .addStroke(GestureDescription.StrokeDescription(path, 0, 100))
+            .addStroke(GestureDescription.StrokeDescription(path, 0, TAP_DURATION_MS))
             .build())
     }
 
@@ -90,7 +92,7 @@ class AccessibilityDeviceActions private constructor(
 
     override suspend fun windowSize(): Pair<Int, Int> {
         val ctx = context ?: throw BackendUnavailableError("Accessibility", "No application context")
-        return if (Build.VERSION.SDK_INT >= 30) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val wm = ctx.getSystemService(WindowManager::class.java)
             val bounds = wm.currentWindowMetrics.bounds
             bounds.width() to bounds.height()
@@ -107,7 +109,7 @@ class AccessibilityDeviceActions private constructor(
     }
 
     override suspend fun screenshot(filename: String?): ByteArray {
-        if (Build.VERSION.SDK_INT < 30) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             throw BackendUnavailableError(
                 backend = "Accessibility",
                 setupHint = "Screenshot requires Android 11+ (API 30) or Shizuku (Phase 6)",
