@@ -7,7 +7,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 
 private const val POLL_INTERVAL_MS = 100L
 
-class AccessibilityWaitStrategy : WaitStrategy {
+internal class AccessibilityWaitStrategy : WaitStrategy {
 
     override suspend fun await(timeoutMs: Long, condition: suspend () -> Boolean): Boolean {
         val service = DroidPilotAccessibilityService.instance
