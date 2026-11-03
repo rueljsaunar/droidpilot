@@ -14,15 +14,15 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val etUsername = findViewById<EditText>(R.id.et_username)
-        val etPassword = findViewById<EditText>(R.id.et_password)
-        val tvError = findViewById<TextView>(R.id.tv_login_error)
-        val btnLogin = findViewById<Button>(R.id.btn_login)
+        val etUsername = findViewById<EditText>(R.id.username)
+        val etPassword = findViewById<EditText>(R.id.password)
+        val tvError = findViewById<TextView>(R.id.tvLoginError)
+        val btnLogin = findViewById<Button>(R.id.btnLogin)
 
         btnLogin.setOnClickListener {
             val username = etUsername.text.toString()
             val password = etPassword.text.toString()
-            if (username == "admin" && password == "password") {
+            if (isValidCredentials(username, password)) {
                 tvError.visibility = View.GONE
                 startActivity(Intent(this, ItemListActivity::class.java))
             } else {
@@ -30,5 +30,11 @@ class LoginActivity : AppCompatActivity() {
                 tvError.visibility = View.VISIBLE
             }
         }
+    }
+
+    companion object {
+        fun isValidCredentials(username: String, password: String): Boolean =
+            username.isNotEmpty() && password.isNotEmpty() &&
+                username == "qa_user" && password == "secret"
     }
 }

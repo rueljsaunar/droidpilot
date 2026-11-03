@@ -11,11 +11,7 @@ class WebViewActivity : AppCompatActivity() {
         setContentView(R.layout.activity_web_view)
 
         val webView = findViewById<WebView>(R.id.wv_main)
-        webView.loadData(
-            "<html><body><h1 id=\"title\">DroidPilot Web</h1>" +
-                "<p id=\"content\">Sample web content for testing.</p></body></html>",
-            "text/html",
-            "utf-8"
-        )
+        webView.settings.javaScriptEnabled = true
+        webView.loadUrl("file:///android_asset/index.html")
     }
 }

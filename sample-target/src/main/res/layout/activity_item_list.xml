@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_items"
+        android:id="@+id/rvItems"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:contentDescription="items list" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/btnOpenWebView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="add item button"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:layout_margin="8dp"
+        android:contentDescription="Open WebView"
+        android:text="@string/btn_open_webview" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

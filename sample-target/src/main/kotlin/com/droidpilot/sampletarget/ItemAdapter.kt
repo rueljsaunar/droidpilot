@@ -5,8 +5,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemAdapter(private val items: MutableList<String>) :
-    RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(
+    private val items: List<String>,
+    private val onItemClick: (String) -> Unit,
+) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
     class ViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView)
 
@@ -17,13 +19,10 @@ class ItemAdapter(private val items: MutableList<String>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.textView.text = items[position]
+        val item = items[position]
+        holder.textView.text = item
+        holder.textView.setOnClickListener { onItemClick(item) }
     }
 
     override fun getItemCount() = items.size
-
-    fun addItem(name: String) {
-        items.add(name)
-        notifyItemInserted(items.size - 1)
-    }
 }
