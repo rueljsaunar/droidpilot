@@ -87,16 +87,16 @@ DroidPilot/
 
 Mark each item complete before committing a phase. All items in a phase must pass before starting the next.
 
-### Phase 0 – Scaffold ☐
-- [ ] Multi-module Gradle project created (Kotlin DSL, version catalog)
-- [ ] All modules in module map exist as empty stubs
-- [ ] Hilt wired in `:app`
-- [ ] Compose app shell renders a placeholder screen
-- [ ] `:sample-target` builds and runs (login form + item list + dialog)
-- [ ] `./gradlew assembleDebug` passes (all modules)
-- [ ] `./gradlew test` passes (trivial tests)
-- [ ] `CLAUDE.md` created ✅
-- [ ] `docs/ARCHITECTURE.md` created ✅
+### Phase 0 – Scaffold ✅
+- [x] Multi-module Gradle project created (Kotlin DSL, version catalog)
+- [x] All modules in module map exist as empty stubs
+- [x] Hilt wired in `:app`
+- [x] Compose app shell renders a placeholder screen
+- [x] `:sample-target` builds and runs (login form + item list + dialog)
+- [x] `./gradlew assembleDebug` passes (all modules)
+- [x] `./gradlew test` passes (trivial tests)
+- [x] `CLAUDE.md` created ✅
+- [x] `docs/ARCHITECTURE.md` created ✅
 
 ### Phase 1 – Accessibility Backend ☐
 - [ ] `AccessibilityService` declared in manifest with correct config
