@@ -25,5 +25,11 @@ captures/
 *.jks
 *.keystore
 
+# Kotlin daemon scratch
+.kotlin/
+
+# VS Code
+.vscode/
+
 # Superpowers workspace (not project source)
 .superpowers/
