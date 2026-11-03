@@ -31,6 +31,7 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.coroutines.android)
     implementation(libs.androidx.core)
+    implementation(libs.activity.compose)
     testImplementation(libs.junit)
     testImplementation(libs.hilt.android)
 }

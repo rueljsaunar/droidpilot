@@ -11,6 +11,7 @@ coroutines = "1.11.0"
 navigation = "2.9.8"
 core = "1.19.0"
 recyclerview = "1.4.0"
+activity-compose = "1.10.1"
 junit = "4.13.2"
 
 [libraries]
@@ -25,6 +26,7 @@ hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.re
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 junit = { module = "junit:junit", version.ref = "junit" }
 
 [plugins]
