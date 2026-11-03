@@ -53,6 +53,18 @@ DroidPilot/
 - All public API has KDoc
 - `AccessibilityNodeInfo` objects must be recycled; always wrap in `AutoCloseable` holder and use `use {}`
 
+### UI / Design
+
+- **Modern Material 3** throughout: use M3 components (`TopAppBar`, `NavigationBar`, `Card`, `FilledTonalButton`, etc.) — no legacy AppCompat or Material 2 widgets
+- **Dynamic color** (`dynamicColorScheme`) enabled on Android 12+ with a tasteful static fallback palette for older devices
+- **Edge-to-edge** layout (`WindowCompat.setDecorFitsSystemWindows(window, false)`) with proper inset handling via `WindowInsets`
+- **Fluid motion**: use shared-element transitions and `AnimatedContent`/`AnimatedVisibility` for state changes; avoid abrupt cuts
+- **Dark theme first**: design and test in dark mode; light mode must be equally polished
+- **Typography**: use M3 `Typography` scale (`headlineMedium`, `bodyLarge`, etc.) — no hard-coded font sizes
+- **Spacing / shape tokens**: use M3 `Shapes` and `dp` values from the design token set — no magic pixel/dp literals in UI code
+- **Icons**: Material Symbols (Rounded style) via `androidx.compose.material:material-icons-extended`
+- **No placeholder or "lorem ipsum" UI** in any committed screen — every screen must render real or representative data
+
 ### Naming
 
 | Kind | Convention | Example |

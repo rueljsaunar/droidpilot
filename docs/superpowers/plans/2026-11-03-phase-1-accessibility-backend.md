@@ -21,6 +21,7 @@
 - Password fields (`isPassword == true`) must always return `"[REDACTED]"` from `getText()`; never log raw text
 - Minimum SDK 26 (`minSdk` from version catalog); `AccessibilityService.takeScreenshot()` requires API 30 — detect and throw `BackendUnavailableError` on older devices
 - All new dependencies verified against current stable releases before adding to `libs.versions.toml`
+- **UI must look modern**: Material 3 components only, dynamic color on Android 12+, edge-to-edge layout, dark-theme-first — see CLAUDE.md § UI / Design for the full rule set; applies to every feature phase
 
 ---
 
