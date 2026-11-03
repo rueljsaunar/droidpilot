@@ -1,11 +1,12 @@
 [versions]
 agp = "9.4.0"
 kotlin = "2.3.21"
-compileSdk = "36"
-targetSdk = "36"
+compileSdk = "37"
+targetSdk = "37"
+ksp = "2.3.9"
 minSdk = "26"
 compose-bom = "2026.09.00"
-hilt = "2.57.1"
+hilt = "2.60.1"
 coroutines = "1.11.0"
 navigation = "2.9.8"
 core = "1.19.0"
@@ -29,7 +30,6 @@ junit = { module = "junit:junit", version.ref = "junit" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
