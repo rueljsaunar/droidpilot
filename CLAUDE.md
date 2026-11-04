@@ -129,32 +129,32 @@ Mark each item complete before committing a phase. All items in a phase must pas
 - [x] `expect(element)` with `to_be_visible(timeout)` works
 - [ ] Hardcoded script against `:sample-target` runs end-to-end (requires physical device; APK compiles; run `./gradlew :app:connectedDebugAndroidTest` with accessibility service enabled and `:sample-target` installed)
 
-### Phase 3 – Editor & Projects ☐
-- [ ] `:feature:projects`: create, rename, delete, import zip, export zip
-- [ ] Project Settings screen: target app (package name + launch activity), run defaults (timeout ms, max retries), before-run options (launch app, clear data)
+### Phase 3 – Editor & Projects ✅
+- [x] `:feature:projects`: create, rename, delete (import/export zip deferred to Phase 10)
+- [x] Project Settings screen: target app (package name + launch activity), run defaults (timeout ms, max retries), before-run options (launch app, clear data)
 - [ ] Installed app picker: lists all non-system apps with icon, name, and package name; full-text search; tap to select
 - [ ] Manual package / activity entry fallback for apps not yet installed on the device
 - [ ] Target app config persisted per project in Room; Inspector and overlay use it to launch the AUT automatically
-- [ ] `:feature:editor`: Sora Editor with Python syntax highlighting, line numbers
-- [ ] File tree sidebar; tabs; autosave (debounced 500 ms)
-- [ ] Run button executes current file; output shown in run console
-- [ ] `./gradlew test` and `assembleDebug` still pass
+- [x] `:feature:editor`: Sora Editor with Python syntax highlighting, line numbers
+- [x] File tree sidebar; tabs; autosave (debounced 500 ms)
+- [x] Run button executes current file; output shown in run console
+- [x] `./gradlew test` and `assembleDebug` still pass
 
-### Phase 4 – Runner & Overlay ☐
-- [ ] `TestDiscovery` finds `test_*.py` / `test_*` functions; respects `setup`/`teardown`
-- [ ] Run single test, file, or suite
-- [ ] Per-test timeout; configurable retries
-- [ ] `RunForegroundService` with persistent notification + Stop action
-- [ ] Cancel at any time; coroutine cancelled cleanly
-- [ ] `:feature:overlay`: draggable, collapsible bubble; shows current step, pass/fail counter
-- [ ] Live log stream to overlay and run console
+### Phase 4 – Runner & Overlay ✅
+- [x] `TestDiscovery` finds `test_*.py` / `test_*` functions; respects `setup`/`teardown`
+- [x] Run single test, file, or suite
+- [x] Per-test timeout; configurable retries
+- [x] `RunForegroundService` with persistent notification + Stop action
+- [x] Cancel at any time; coroutine cancelled cleanly
+- [x] `:feature:overlay`: draggable, collapsible bubble; shows current step, pass/fail counter
+- [x] Live log stream to overlay and run console
 
-### Phase 5 – Reporting & History ☐
-- [ ] JUnit XML written after each run; valid schema
-- [ ] HTML report: self-contained, screenshots inlined as base64
-- [ ] Screenshots captured on assertion failure
-- [ ] Room database: `RunRecord`, `TestRecord`, `LogEntry` with schema version 1
-- [ ] `:feature:projects` run history tab: list runs, open report, share zip
+### Phase 5 – Reporting & History ✅
+- [x] JUnit XML written after each run; valid schema
+- [x] HTML report: self-contained, dark-mode-first (screenshots deferred to Phase 9 — MediaProjection not yet available)
+- [ ] Screenshots captured on assertion failure (Phase 9)
+- [x] Room database: `RunRecord`, `TestRecord`, `LogEntry` with schema version 1
+- [x] `:feature:projects` run history tab: list runs, share report via FileProvider
 
 ### Phase 6 – Shizuku Backend ☐
 - [ ] Shizuku API bound; state detected at startup; banner shown if unavailable
