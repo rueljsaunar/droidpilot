@@ -14,6 +14,10 @@ public class RunRepository @Inject constructor() {
     private val _events = MutableSharedFlow<RunEvent>(replay = 100)
     public val events: SharedFlow<RunEvent> = _events.asSharedFlow()
 
+    // replay=0 feed for ReportRepository — never sees stale history
+    private val _recordEvents = MutableSharedFlow<RunEvent>(replay = 0)
+    public val recordEvents: SharedFlow<RunEvent> = _recordEvents.asSharedFlow()
+
     private val _isRunning = MutableStateFlow(false)
     public val isRunning: StateFlow<Boolean> = _isRunning.asStateFlow()
 
@@ -28,6 +32,7 @@ public class RunRepository @Inject constructor() {
 
     public suspend fun emit(event: RunEvent) {
         _events.emit(event)
+        _recordEvents.emit(event)
         when (event) {
             is RunEvent.TestStarted -> {
                 _isRunning.value = true
@@ -39,8 +44,16 @@ public class RunRepository @Inject constructor() {
                 _isRunning.value = false
                 _currentStep.value = ""
             }
+            is RunEvent.RunStarted -> { /* no aggregate state change */ }
             is RunEvent.StepLogged -> { /* no aggregate state change */ }
         }
+    }
+
+    public suspend fun startRun(projectId: Long?, projectDir: String) {
+        reset()
+        val event = RunEvent.RunStarted(projectId ?: -1L, projectDir)
+        _events.emit(event)
+        _recordEvents.emit(event)
     }
 
     public fun reset() {

@@ -41,20 +41,22 @@ public class RunForegroundService : Service() {
             ACTION_START -> {
                 val projectDir = intent.getStringExtra(EXTRA_PROJECT_DIR)
                     ?: run { stopSelf(); return START_NOT_STICKY }
+                val projectId = intent.getLongExtra(EXTRA_PROJECT_ID, -1L)
+                    .takeIf { it >= 0 }
                 val config = RunConfig(
                     timeoutMs = intent.getLongExtra(EXTRA_TIMEOUT_MS, 30_000L),
                     maxRetries = intent.getIntExtra(EXTRA_MAX_RETRIES, 0),
                 )
                 startForeground(NOTIFICATION_ID, buildNotification("Discovering tests…"))
-                startRun(projectDir, config)
+                startRun(projectId, projectDir, config)
             }
         }
         return START_NOT_STICKY
     }
 
-    private fun startRun(projectDir: String, config: RunConfig) {
-        runRepository.reset()
+    private fun startRun(projectId: Long?, projectDir: String, config: RunConfig) {
         runJob = serviceScope.launch {
+            runRepository.startRun(projectId, projectDir)
             val tests = TestDiscovery.discover(projectDir)
             if (tests.isEmpty()) {
                 runRepository.emit(RunEvent.RunComplete(0, 0))
@@ -111,6 +113,7 @@ public class RunForegroundService : Service() {
         public const val ACTION_START: String = "com.droidpilot.runner.START"
         public const val ACTION_STOP: String = "com.droidpilot.runner.STOP"
         public const val EXTRA_PROJECT_DIR: String = "projectDir"
+        public const val EXTRA_PROJECT_ID: String = "projectId"
         public const val EXTRA_TIMEOUT_MS: String = "timeoutMs"
         public const val EXTRA_MAX_RETRIES: String = "maxRetries"
         private const val CHANNEL_ID = "droidpilot_runner"

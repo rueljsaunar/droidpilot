@@ -33,6 +33,7 @@ public class EditorViewModel @Inject constructor(
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
+    public val projectId: Long = savedState["projectId"] ?: -1L
     public val projectDirPath: String =
         URLDecoder.decode(savedState["encodedDirPath"] ?: "", "UTF-8")
 
@@ -142,7 +143,7 @@ public class EditorViewModel @Inject constructor(
         _isRunning.value = true
         viewModelScope.launch(ioDispatcher) {
             val testCase = TestCase(tab.path, File(tab.path).nameWithoutExtension)
-            runRepository.reset()
+            runRepository.startRun(projectId.takeIf { it >= 0 }, projectDirPath)
             runRepository.emit(RunEvent.TestStarted(testCase))
             val output = runCatching { ScriptRunner.executeCapturingOutput(content) }
                 .getOrElse { e -> "ERROR: ${e.message ?: e.toString()}" }

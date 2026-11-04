@@ -40,6 +40,7 @@ dependencies {
     implementation(project(":feature:projects"))
     implementation(project(":feature:editor"))
     implementation(project(":feature:overlay"))
+    implementation(project(":reporting"))
     implementation(libs.activity.compose)
     testImplementation(libs.junit)
     testImplementation(libs.hilt.android)

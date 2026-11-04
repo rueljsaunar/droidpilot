@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.droidpilot.feature.editor.EditorScreen
 import com.droidpilot.feature.projects.ui.ProjectListScreen
 import com.droidpilot.feature.projects.ui.ProjectSettingsScreen
+import com.droidpilot.feature.projects.ui.RunHistoryScreen
 
 sealed class Route(val path: String) {
     object Projects : Route("projects")
@@ -19,6 +20,9 @@ sealed class Route(val path: String) {
     }
     object Settings : Route("settings/{projectId}") {
         fun build(id: Long) = "settings/$id"
+    }
+    object History : Route("history/{projectId}") {
+        fun build(id: Long) = "history/$id"
     }
 }
 
@@ -32,6 +36,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 },
                 onOpenSettings = { id ->
                     navController.navigate(Route.Settings.build(id))
+                },
+                onViewHistory = { id ->
+                    navController.navigate(Route.History.build(id))
                 },
             )
         }
@@ -61,6 +68,14 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 projectId = id,
                 onNavigateUp = { navController.navigateUp() },
             )
+        }
+        composable(
+            Route.History.path,
+            arguments = listOf(
+                navArgument("projectId") { type = NavType.LongType },
+            ),
+        ) {
+            RunHistoryScreen(onNavigateUp = { navController.navigateUp() })
         }
     }
 }

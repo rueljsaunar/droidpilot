@@ -19,6 +19,7 @@ ksp {
 }
 dependencies {
     implementation(project(":core:automation"))
+    implementation(project(":reporting"))
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
@@ -30,6 +31,7 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
     implementation(libs.coroutines.android)
+    implementation(libs.androidx.core)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.compose.material.icons.extended)
     testImplementation(libs.junit)

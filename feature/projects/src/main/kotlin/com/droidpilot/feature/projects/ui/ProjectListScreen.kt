@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
@@ -58,6 +59,7 @@ import java.util.Locale
 public fun ProjectListScreen(
     onOpenProject: (projectId: Long, projectDirPath: String) -> Unit,
     onOpenSettings: (projectId: Long) -> Unit,
+    onViewHistory: (projectId: Long) -> Unit = {},
     viewModel: ProjectListViewModel = hiltViewModel(),
 ) {
     val projects by viewModel.projects.collectAsState()
@@ -126,6 +128,7 @@ public fun ProjectListScreen(
                         onRename = { newName -> viewModel.renameProject(project.id, newName) },
                         onDelete = { viewModel.deleteProject(project.id) },
                         onSettings = { onOpenSettings(project.id) },
+                        onHistory = { onViewHistory(project.id) },
                     )
                 }
             }
@@ -150,6 +153,7 @@ private fun ProjectCard(
     onRename: (String) -> Unit,
     onDelete: () -> Unit,
     onSettings: () -> Unit,
+    onHistory: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf(false) }
@@ -189,6 +193,11 @@ private fun ProjectCard(
                         text = { Text("Settings") },
                         leadingIcon = { Icon(Icons.Default.Settings, null) },
                         onClick = { showMenu = false; onSettings() },
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Run History") },
+                        leadingIcon = { Icon(Icons.Default.History, null) },
+                        onClick = { showMenu = false; onHistory() },
                     )
                     DropdownMenuItem(
                         text = { Text("Rename") },
