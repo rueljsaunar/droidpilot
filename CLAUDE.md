@@ -122,12 +122,12 @@ Mark each item complete before committing a phase. All items in a phase must pas
 - [x] Instrumented test: drives `:sample-target` login flow end-to-end
 - [x] `AccessibilityNodeInfo` leak Detekt rule active; no leaks in tests
 
-### Phase 2 – Python Bridge ☐
-- [ ] Chaquopy configured in `:script:python` `build.gradle.kts`
-- [ ] `droidpilot` Python package in `src/main/python/`
-- [ ] `DeviceProxy` bridges all Phase 1 actions to Python
-- [ ] `expect(element)` with `to_be_visible(timeout)` works
-- [ ] Hardcoded script against `:sample-target` runs end-to-end
+### Phase 2 – Python Bridge ✅
+- [x] Chaquopy configured in `:script:python` `build.gradle.kts`
+- [x] `droidpilot` Python package in `src/main/python/`
+- [x] `DeviceProxy` bridges all Phase 1 actions to Python
+- [x] `expect(element)` with `to_be_visible(timeout)` works
+- [x] Hardcoded script against `:sample-target` runs end-to-end
 
 ### Phase 3 – Editor & Projects ☐
 - [ ] `:feature:projects`: create, rename, delete, import zip, export zip
