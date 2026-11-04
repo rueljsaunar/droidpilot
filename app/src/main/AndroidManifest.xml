@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <!-- Required for getLaunchIntentForPackage() on Android 11+ (API 30+) -->
     <queries>
         <intent>
@@ -7,6 +13,7 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
     </queries>
+
     <application android:label="DroidPilot" android:name=".DroidPilotApp">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
@@ -14,5 +21,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.droidpilot.runner.RunForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <service
+            android:name="com.droidpilot.feature.overlay.OverlayService"
+            android:exported="false" />
     </application>
 </manifest>

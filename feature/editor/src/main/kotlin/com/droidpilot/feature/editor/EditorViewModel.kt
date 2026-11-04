@@ -18,6 +18,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.droidpilot.runner.RunEvent
+import com.droidpilot.runner.RunRepository
+import com.droidpilot.runner.TestCase
 import com.droidpilot.script.python.ScriptRunner
 import java.io.File
 import javax.inject.Inject
@@ -25,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 public class EditorViewModel @Inject constructor(
     savedState: SavedStateHandle,
+    private val runRepository: RunRepository,
 ) : ViewModel() {
 
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -137,11 +141,23 @@ public class EditorViewModel @Inject constructor(
         _runOutput.value = emptyList()
         _isRunning.value = true
         viewModelScope.launch(ioDispatcher) {
+            val testCase = TestCase(tab.path, File(tab.path).nameWithoutExtension)
+            runRepository.reset()
+            runRepository.emit(RunEvent.TestStarted(testCase))
             val output = runCatching { ScriptRunner.executeCapturingOutput(content) }
                 .getOrElse { e -> "ERROR: ${e.message ?: e.toString()}" }
-            output.lineSequence()
-                .filter { it.isNotEmpty() }
-                .forEach { line -> _runOutput.update { it + line } }
+            val lines = output.lineSequence().filter { it.isNotEmpty() }.toList()
+            lines.forEach { line ->
+                _runOutput.update { it + line }
+                runRepository.emit(RunEvent.StepLogged(line))
+            }
+            val errored = lines.any { it.startsWith("ERROR:") }
+            if (errored) {
+                runRepository.emit(RunEvent.TestFailed(testCase, lines.last(), 0L))
+            } else {
+                runRepository.emit(RunEvent.TestPassed(testCase, 0L))
+            }
+            runRepository.emit(RunEvent.RunComplete(if (errored) 0 else 1, if (errored) 1 else 0))
             _isRunning.value = false
         }
     }

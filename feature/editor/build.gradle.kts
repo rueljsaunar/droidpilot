@@ -17,6 +17,7 @@ android {
 dependencies {
     implementation(project(":core:automation"))
     implementation(project(":script:python"))
+    implementation(project(":runner"))
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)

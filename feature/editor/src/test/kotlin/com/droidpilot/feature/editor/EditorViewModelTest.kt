@@ -1,6 +1,7 @@
 package com.droidpilot.feature.editor
 
 import androidx.lifecycle.SavedStateHandle
+import com.droidpilot.runner.RunRepository
 import java.net.URLEncoder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -22,7 +23,7 @@ class EditorViewModelTest {
                 "encodedDirPath" to URLEncoder.encode(dirPath, "UTF-8"),
             )
         )
-        return EditorViewModel(handle)
+        return EditorViewModel(handle, RunRepository())
     }
 
     @Test fun openFile_addsTab() = runTest(dispatcher) {
