@@ -127,7 +127,7 @@ Mark each item complete before committing a phase. All items in a phase must pas
 - [x] `droidpilot` Python package in `src/main/python/`
 - [x] `DeviceProxy` bridges all Phase 1 actions to Python
 - [x] `expect(element)` with `to_be_visible(timeout)` works
-- [x] Hardcoded script against `:sample-target` runs end-to-end
+- [ ] Hardcoded script against `:sample-target` runs end-to-end (requires physical device; APK compiles; run `./gradlew :app:connectedDebugAndroidTest` with accessibility service enabled and `:sample-target` installed)
 
 ### Phase 3 – Editor & Projects ☐
 - [ ] `:feature:projects`: create, rename, delete, import zip, export zip

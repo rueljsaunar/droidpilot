@@ -13,6 +13,13 @@ public object ScriptRunner {
         check(Python.isStarted()) {
             "Python interpreter not started — call Python.start() first"
         }
-        Python.getInstance().getModule("builtins").callAttr("exec", script)
+        val py = Python.getInstance()
+        val builtins = py.getModule("builtins")
+        // exec() called from Java has no enclosing Python frame, so globals and locals
+        // would be NULL, raising SystemError. Supply an explicit globals dict with
+        // __name__ = "__main__" so relative imports and dunder checks work as expected.
+        val globals = builtins.callAttr("dict")
+        globals.callAttr("__setitem__", "__name__", "__main__")
+        builtins.callAttr("exec", script, globals)
     }
 }

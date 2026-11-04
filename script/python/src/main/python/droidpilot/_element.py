@@ -1,9 +1,12 @@
+import functools
+
 from ._errors import DroidPilotError, ElementNotFoundError
 from ._errors import TimeoutError as _TimeoutError
 
 
 def _wrap_java_exception(func):
     """Re-raise Java exceptions as Python DroidPilotError subclasses."""
+    @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -13,7 +16,10 @@ def _wrap_java_exception(func):
                 raise ElementNotFoundError(str(e)) from e
             if "TimeoutError" in cause_cls:
                 raise _TimeoutError(str(e)) from e
-            if "AutomationException" in cause_cls or "RuntimeException" in cause_cls:
+            # Catch any Java/Kotlin exception that crossed the bridge:
+            # AutomationException, BackendUnavailableError, IllegalArgumentException,
+            # IllegalStateException, RuntimeException, etc.
+            if "Exception" in cause_cls or "Error" in cause_cls:
                 raise DroidPilotError(str(e)) from e
             raise
     return wrapper

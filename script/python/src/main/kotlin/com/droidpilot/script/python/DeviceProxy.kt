@@ -18,8 +18,8 @@ public object DeviceProxy {
         fun deviceActions(): DeviceActions
     }
 
-    private var appContext: Context? = null
-    private var testActions: DeviceActions? = null
+    @Volatile private var appContext: Context? = null
+    @Volatile private var testActions: DeviceActions? = null
 
     internal fun initForTest(a: DeviceActions) {
         testActions = a
@@ -31,7 +31,10 @@ public object DeviceProxy {
 
     private val actions: DeviceActions
         get() = testActions
-            ?: EntryPointAccessors.fromApplication(appContext!!, Entry::class.java).deviceActions()
+            ?: EntryPointAccessors.fromApplication(
+                checkNotNull(appContext) { "DeviceProxy.init(context) was not called" },
+                Entry::class.java,
+            ).deviceActions()
 
     public fun find(enc: String): UiElementProxy =
         UiElementProxy(parseSelector(enc), actions)

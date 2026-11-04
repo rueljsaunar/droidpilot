@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.chaquopy)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 android {
     namespace = "com.droidpilot.script.python"
@@ -15,10 +17,17 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
+// Pin the Python version; Chaquopy 15+ exposes this via configure<PythonExtension>.
+configure<com.chaquo.python.PythonExtension> {
+    defaultConfig {
+        version = "3.10"
+    }
+}
 dependencies {
     implementation(project(":core:automation"))
     implementation(libs.coroutines.android)
     implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
     androidTestImplementation(libs.androidx.test.runner)
