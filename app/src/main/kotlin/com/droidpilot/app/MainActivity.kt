@@ -3,6 +3,7 @@ package com.droidpilot.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import com.droidpilot.app.navigation.AppNavHost
 import com.droidpilot.app.ui.theme.DroidPilotTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -11,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             DroidPilotTheme {
                 AppNavHost()

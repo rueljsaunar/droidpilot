@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(project(":backend:accessibility"))
     implementation(project(":script:python"))
+    implementation(project(":feature:projects"))
     implementation(libs.activity.compose)
     testImplementation(libs.junit)
     testImplementation(libs.hilt.android)

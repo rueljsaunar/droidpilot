@@ -30,6 +30,8 @@ dependencies {
     implementation(libs.room.ktx)
     ksp(libs.room.compiler)
     implementation(libs.coroutines.android)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.compose.material.icons.extended)
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
     androidTestImplementation(libs.room.testing)
