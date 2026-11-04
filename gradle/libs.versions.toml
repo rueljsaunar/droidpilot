@@ -19,6 +19,7 @@ androidx-test-ext-junit = "1.2.1"
 hilt-testing = "2.60.1"
 junit = "4.13.2"
 detekt = "2.0.0-alpha.6"
+chaquopy = "17.2.0"
 
 [libraries]
 androidx-core = { module = "androidx.core:core", version.ref = "core" }
@@ -51,3 +52,4 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 detekt = { id = "dev.detekt", version.ref = "detekt" }
+chaquopy = { id = "com.chaquo.python", version.ref = "chaquopy" }

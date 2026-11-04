@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.chaquopy)
 }
 android {
     namespace = "com.droidpilot.app"
@@ -13,6 +14,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "0.1.0"
+        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
     buildFeatures { compose = true }
     compileOptions {
@@ -32,6 +34,7 @@ dependencies {
     implementation(libs.coroutines.android)
     implementation(libs.androidx.core)
     implementation(project(":backend:accessibility"))
+    implementation(project(":script:python"))
     implementation(libs.activity.compose)
     testImplementation(libs.junit)
     testImplementation(libs.hilt.android)
