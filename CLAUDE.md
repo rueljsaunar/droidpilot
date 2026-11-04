@@ -34,6 +34,7 @@ DroidPilot/
 │   ├── projects/               # Project CRUD, import/export
 │   ├── overlay/                # Floating overlay window
 │   ├── inspector/              # UI tree inspector
+│   ├── object-repository/      # Saved selectors/elements; insert into editor
 │   └── recorder/               # Tap/text recorder → Python steps
 └── sample-target/              # Demo app used as app-under-test
 ```
@@ -78,7 +79,7 @@ DroidPilot/
 
 ### Python (droidpilot package)
 
-- Python 3.8 target (Chaquopy compatibility)
+- Python 3.10 target (Chaquopy 17.x minimum; 3.8 was dropped in Chaquopy 17.0)
 - All public methods have docstrings (used for editor autocompletion)
 - No mutable global state in the bridge module
 - Raise `DroidPilotError` (or subclass) for all automation failures; never swallow exceptions
@@ -130,6 +131,10 @@ Mark each item complete before committing a phase. All items in a phase must pas
 
 ### Phase 3 – Editor & Projects ☐
 - [ ] `:feature:projects`: create, rename, delete, import zip, export zip
+- [ ] Project Settings screen: target app (package name + launch activity), run defaults (timeout ms, max retries), before-run options (launch app, clear data)
+- [ ] Installed app picker: lists all non-system apps with icon, name, and package name; full-text search; tap to select
+- [ ] Manual package / activity entry fallback for apps not yet installed on the device
+- [ ] Target app config persisted per project in Room; Inspector and overlay use it to launch the AUT automatically
 - [ ] `:feature:editor`: Sora Editor with Python syntax highlighting, line numbers
 - [ ] File tree sidebar; tabs; autosave (debounced 500 ms)
 - [ ] Run button executes current file; output shown in run console
@@ -158,13 +163,22 @@ Mark each item complete before committing a phase. All items in a phase must pas
 - [ ] Graceful fallback: `BackendUnavailableError` with setup instructions when Shizuku absent
 - [ ] Onboarding guide for Wireless Debugging + Shizuku
 
-### Phase 7 – Inspector ☐
+### Phase 7 – Inspector & Object Repository ☐
 - [ ] Capture current screen snapshot from overlay
 - [ ] Screenshot with tappable element bounding boxes overlay
 - [ ] Hierarchy tree view; selecting node highlights box
 - [ ] Attribute panel: all relevant `AccessibilityNodeInfo` fields
 - [ ] Selector suggestion: most-stable selector ranked first
 - [ ] "Copy selector" and "Insert into editor" actions
+- [ ] `:feature:object-repository` module: Room entity `RepositoryEntry` (id, name, selector, selectorType, appPackage, screenLabel, screenshotPath, createdAt)
+- [ ] "Save to Repository" action on Inspector attribute panel; prompts for friendly name and screen label
+- [ ] Object Repository screen: list all saved entries, grouped by `screenLabel`
+- [ ] Expandable cards: show full selector string, selector type badge, app package
+- [ ] Search/filter entries by name, selector type, or screen label
+- [ ] Rename and delete entries; bulk-delete via multi-select
+- [ ] "Insert into editor" action: inserts the appropriate `dp.*()` call at the active editor cursor
+- [ ] "Copy selector" action: copies the raw selector string to clipboard
+- [ ] `d.repo("name")` Python API: retrieves a `Selector` from the repository by friendly name at runtime
 
 ### Phase 8 – Recorder ☐
 - [ ] Start/stop recording from overlay
