@@ -17,8 +17,9 @@ import javax.inject.Inject
 @HiltViewModel
 public class ProjectSettingsViewModel @Inject constructor(
     private val repo: ProjectRepository,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
+
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     private val _project = MutableStateFlow<ProjectEntity?>(null)
     public val project: StateFlow<ProjectEntity?> = _project.asStateFlow()

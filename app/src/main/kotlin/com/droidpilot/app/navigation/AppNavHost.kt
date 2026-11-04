@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.droidpilot.feature.editor.EditorScreen
 import com.droidpilot.feature.projects.ui.ProjectListScreen
 import com.droidpilot.feature.projects.ui.ProjectSettingsScreen
 
@@ -40,8 +41,14 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 navArgument("projectId") { type = NavType.LongType },
                 navArgument("encodedDirPath") { type = NavType.StringType },
             ),
-        ) {
-            // Phase 4: EditorScreen
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("projectId") ?: return@composable
+            val encodedDir = backStackEntry.arguments?.getString("encodedDirPath") ?: return@composable
+            EditorScreen(
+                projectId = id,
+                encodedDirPath = encodedDir,
+                onBack = { navController.navigateUp() },
+            )
         }
         composable(
             Route.Settings.path,

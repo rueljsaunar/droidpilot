@@ -17,12 +17,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 }
-// Pin the Python version; Chaquopy 15+ exposes this via configure<PythonExtension>.
-configure<com.chaquo.python.PythonExtension> {
-    defaultConfig {
-        version = "3.10"
-    }
-}
 dependencies {
     implementation(project(":core:automation"))
     implementation(libs.coroutines.android)

@@ -18,8 +18,9 @@ import javax.inject.Inject
 @HiltViewModel
 public class ProjectListViewModel @Inject constructor(
     private val repo: ProjectRepository,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
+
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     public val projects: StateFlow<List<com.droidpilot.feature.projects.data.ProjectEntity>> =
         repo.observeAll().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())

@@ -37,6 +37,7 @@ dependencies {
     implementation(project(":backend:accessibility"))
     implementation(project(":script:python"))
     implementation(project(":feature:projects"))
+    implementation(project(":feature:editor"))
     implementation(libs.activity.compose)
     testImplementation(libs.junit)
     testImplementation(libs.hilt.android)
