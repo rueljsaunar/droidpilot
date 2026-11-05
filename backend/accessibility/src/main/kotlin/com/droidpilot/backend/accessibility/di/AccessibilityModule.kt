@@ -1,7 +1,9 @@
 package com.droidpilot.backend.accessibility.di
 
+import com.droidpilot.backend.accessibility.AccessibilityActionRecorder
 import com.droidpilot.backend.accessibility.AccessibilityDeviceActions
 import com.droidpilot.backend.accessibility.AccessibilityUiInspector
+import com.droidpilot.core.automation.ActionRecorder
 import com.droidpilot.core.automation.DeviceActions
 import com.droidpilot.core.automation.UiInspector
 import dagger.Binds
@@ -20,4 +22,8 @@ abstract class AccessibilityModule {
     @Binds
     @Singleton
     internal abstract fun bindUiInspector(impl: AccessibilityUiInspector): UiInspector
+
+    @Binds
+    @Singleton
+    internal abstract fun bindActionRecorder(impl: AccessibilityActionRecorder): ActionRecorder
 }

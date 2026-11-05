@@ -45,6 +45,7 @@ dependencies {
     implementation(project(":feature:overlay"))
     implementation(project(":feature:inspector"))
     implementation(project(":feature:object-repository"))
+    implementation(project(":feature:recorder"))
     implementation(project(":reporting"))
     implementation(libs.activity.compose)
     testImplementation(libs.junit)

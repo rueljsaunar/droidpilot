@@ -30,6 +30,8 @@ internal class DroidPilotAccessibilityService : AccessibilityService(), Snapshot
                 updateSnapshot()
                 runBlocking { _eventFlow.emit(Unit) }
             }
+            AccessibilityEvent.TYPE_VIEW_CLICKED,
+            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> recorder?.onAccessibilityEvent(event)
         }
     }
 
@@ -93,5 +95,8 @@ internal class DroidPilotAccessibilityService : AccessibilityService(), Snapshot
     companion object {
         @Volatile
         var instance: DroidPilotAccessibilityService? = null
+
+        @Volatile
+        var recorder: AccessibilityActionRecorder? = null
     }
 }

@@ -188,12 +188,12 @@ Mark each item complete before committing a phase. All items in a phase must pas
 - [x] "Copy selector" action: copies the raw selector string to clipboard
 - [x] `d.repo("name")` Python API: retrieves a `Selector` from the repository by friendly name at runtime
 
-### Phase 8 – Recorder ☐
-- [ ] Start/stop recording from overlay
-- [ ] Capture tap positions and text input via accessibility events
-- [ ] Generate Python step for each captured action (best available selector)
-- [ ] Review/edit step list before saving
-- [ ] Save steps at cursor position in active editor tab
+### Phase 8 – Recorder ✅
+- [x] Start/stop recording from overlay
+- [x] Capture tap positions and text input via accessibility events (`TYPE_VIEW_CLICKED`, `TYPE_VIEW_TEXT_CHANGED`)
+- [x] Generate Python step for each captured action (best available selector: resourceId > contentDescription > text)
+- [x] Review/edit step list before saving (`RecorderScreen` with inline BasicTextField per step)
+- [x] Save steps at cursor position in active editor tab (Insert into editor button → `onSaveSteps` callback)
 
 ### Phase 9 – Vision / OCR ☐
 - [ ] MediaProjection screen capture integrated

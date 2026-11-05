@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FiberManualRecord
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,6 +66,11 @@ internal fun OverlayBubble(
     currentStep: State<String>,
     passCount: State<Int>,
     failCount: State<Int>,
+    isRecording: State<Boolean>,
+    recordedStepCount: State<Int>,
+    onStartRecording: () -> Unit,
+    onStopRecording: () -> Unit,
+    onOpenRecorder: () -> Unit,
     onMove: (Float, Float) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -72,6 +79,8 @@ internal fun OverlayBubble(
     val step = currentStep.value
     val passed = passCount.value
     val failed = failCount.value
+    val recording = isRecording.value
+    val stepCount = recordedStepCount.value
 
     MaterialTheme(colorScheme = overlayColorScheme) {
         if (expanded) {
@@ -148,6 +157,50 @@ internal fun OverlayBubble(
                             color = if (running) OverlayGreen else OverlayMuted,
                             maxLines = 2,
                         )
+                    }
+
+                    Spacer(Modifier.height(10.dp))
+
+                    // Recorder controls
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        if (recording) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    Icons.Default.FiberManualRecord,
+                                    contentDescription = null,
+                                    tint = OverlayRed,
+                                    modifier = Modifier.size(10.dp),
+                                )
+                                Text(
+                                    " $stepCount steps",
+                                    fontSize = 11.sp,
+                                    color = OverlayRed,
+                                )
+                            }
+                            IconButton(onClick = onStopRecording, modifier = Modifier.size(28.dp)) {
+                                Icon(Icons.Default.Stop, contentDescription = "Stop recording", modifier = Modifier.size(16.dp), tint = OverlayRed)
+                            }
+                        } else {
+                            Text(
+                                if (stepCount > 0) "$stepCount steps recorded" else "Recorder",
+                                fontSize = 11.sp,
+                                color = OverlayMuted,
+                            )
+                            Row {
+                                if (stepCount > 0) {
+                                    IconButton(onClick = onOpenRecorder, modifier = Modifier.size(28.dp)) {
+                                        Icon(Icons.Default.FiberManualRecord, contentDescription = "Review steps", modifier = Modifier.size(14.dp), tint = OverlayPrimary)
+                                    }
+                                }
+                                IconButton(onClick = onStartRecording, modifier = Modifier.size(28.dp)) {
+                                    Icon(Icons.Default.FiberManualRecord, contentDescription = "Start recording", modifier = Modifier.size(16.dp), tint = OverlayMuted)
+                                }
+                            }
+                        }
                     }
                 }
             }

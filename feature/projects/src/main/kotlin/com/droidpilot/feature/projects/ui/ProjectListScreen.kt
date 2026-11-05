@@ -21,6 +21,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmarks
+import androidx.compose.material.icons.filled.FiberManualRecord
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Folder
@@ -140,6 +142,8 @@ public fun ProjectListScreen(
     onShowAllHistory: () -> Unit = {},
     onOpenInspector: () -> Unit = {},
     onOpenObjectRepository: () -> Unit = {},
+    onOpenRecorder: () -> Unit = {},
+    onOpenAbout: () -> Unit = {},
     viewModel: ProjectListViewModel = hiltViewModel(),
 ) {
     val projects by viewModel.projects.collectAsState()
@@ -178,6 +182,20 @@ public fun ProjectListScreen(
                         Icon(
                             Icons.Default.Bookmarks,
                             contentDescription = "Object Repository",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    IconButton(onClick = onOpenRecorder) {
+                        Icon(
+                            Icons.Default.FiberManualRecord,
+                            contentDescription = "Recorder",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    IconButton(onClick = onOpenAbout) {
+                        Icon(
+                            Icons.Default.Info,
+                            contentDescription = "About",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }

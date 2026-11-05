@@ -23,6 +23,15 @@ public fun Selector.Compound.flatten(): List<Selector> =
         if (part is Selector.Compound) part.flatten() else listOf(part)
     }
 
+/** Python expression that evaluates to a UiElementProxy, e.g. `d.element(id="x")`. */
+public fun Selector.toPythonExpression(): String = when (this) {
+    is Selector.ResourceId   -> """d.element(id="${id.replace("\"", "\\\"")}")"""
+    is Selector.Text         -> """d.element(text="${value.replace("\"", "\\\"")}")"""
+    is Selector.Description  -> """d.element(desc="${value.replace("\"", "\\\"")}")"""
+    is Selector.ClassName    -> """d.element(cls="${name.replace("\"", "\\\"")}")"""
+    else                     -> "d.element()"
+}
+
 /** Human-readable representation suitable for display and clipboard. */
 public fun Selector.toDisplayString(): String = when (this) {
     is Selector.ResourceId     -> "id:$id"

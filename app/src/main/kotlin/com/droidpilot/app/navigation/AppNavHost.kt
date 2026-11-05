@@ -8,12 +8,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.droidpilot.app.ui.AboutScreen
 import com.droidpilot.feature.editor.EditorScreen
 import com.droidpilot.feature.inspector.InspectorScreen
 import com.droidpilot.feature.objectrepository.ui.ObjectRepositoryScreen
 import com.droidpilot.feature.projects.ui.ProjectListScreen
 import com.droidpilot.feature.projects.ui.ProjectSettingsScreen
 import com.droidpilot.feature.projects.ui.RunHistoryScreen
+import com.droidpilot.feature.recorder.RecorderScreen
 
 sealed class Route(val path: String) {
     object Projects : Route("projects")
@@ -29,10 +31,21 @@ sealed class Route(val path: String) {
     object AllHistory : Route("all-history")
     object Inspector : Route("inspector")
     object ObjectRepository : Route("object-repository")
+    object Recorder : Route("recorder")
+    object About : Route("about")
 }
 
 @Composable
-fun AppNavHost(navController: NavHostController = rememberNavController()) {
+fun AppNavHost(
+    navController: NavHostController = rememberNavController(),
+    openRecorderOnStart: Boolean = false,
+) {
+    if (openRecorderOnStart) {
+        androidx.compose.runtime.LaunchedEffect(Unit) {
+            navController.navigate(Route.Recorder.path)
+        }
+    }
+
     NavHost(navController = navController, startDestination = Route.Projects.path) {
         composable(Route.Projects.path) {
             ProjectListScreen(
@@ -53,6 +66,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 },
                 onOpenObjectRepository = {
                     navController.navigate(Route.ObjectRepository.path)
+                },
+                onOpenRecorder = {
+                    navController.navigate(Route.Recorder.path)
+                },
+                onOpenAbout = {
+                    navController.navigate(Route.About.path)
                 },
             )
         }
@@ -99,6 +118,15 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
         }
         composable(Route.ObjectRepository.path) {
             ObjectRepositoryScreen(onNavigateUp = { navController.navigateUp() })
+        }
+        composable(Route.Recorder.path) {
+            RecorderScreen(
+                onNavigateUp = { navController.navigateUp() },
+                onSaveSteps = { _ -> navController.navigateUp() },
+            )
+        }
+        composable(Route.About.path) {
+            AboutScreen(onNavigateUp = { navController.navigateUp() })
         }
     }
 }
