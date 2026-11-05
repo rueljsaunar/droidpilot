@@ -1,9 +1,12 @@
 package com.droidpilot.script.python
 
 import android.content.Context
+import com.droidpilot.backend.shizuku.ShizukuRepository
 import com.droidpilot.core.automation.DeviceActions
 import com.droidpilot.core.automation.DeviceKey
+import com.droidpilot.core.automation.ObjectRepository
 import com.droidpilot.core.automation.Selector
+import com.droidpilot.core.automation.ShellResult
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -16,6 +19,8 @@ public object DeviceProxy {
     @InstallIn(SingletonComponent::class)
     interface Entry {
         fun deviceActions(): DeviceActions
+        fun shizukuRepository(): ShizukuRepository
+        fun objectRepository(): ObjectRepository
     }
 
     @Volatile private var appContext: Context? = null
@@ -31,13 +36,32 @@ public object DeviceProxy {
 
     private val actions: DeviceActions
         get() = testActions
-            ?: EntryPointAccessors.fromApplication(
-                checkNotNull(appContext) { "DeviceProxy.init(context) was not called" },
-                Entry::class.java,
-            ).deviceActions()
+            ?: entry().deviceActions()
+
+    private val shizuku: ShizukuRepository
+        get() = entry().shizukuRepository()
+
+    private val objectRepo: ObjectRepository
+        get() = entry().objectRepository()
+
+    private fun entry(): Entry = EntryPointAccessors.fromApplication(
+        checkNotNull(appContext) { "DeviceProxy.init(context) was not called" },
+        Entry::class.java,
+    )
+
+    // ── Element finders ───────────────────────────────────────────────────────
 
     public fun find(enc: String): UiElementProxy =
         UiElementProxy(parseSelector(enc), actions)
+
+    /** Look up a saved selector by friendly name from the Object Repository. */
+    public fun repo(name: String): UiElementProxy {
+        val entry = runBlocking {
+            check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
+            objectRepo.findByName(name)
+        } ?: throw IllegalArgumentException("No repository entry named \"$name\"")
+        return UiElementProxy(entry.selector, actions)
+    }
 
     public fun findAll(enc: String): List<UiElementProxy> {
         val base = parseSelector(enc)
@@ -49,6 +73,8 @@ public object DeviceProxy {
             UiElementProxy(Selector.Compound(listOf(base, Selector.Instance(i))), actions)
         }
     }
+
+    // ── Gestures ──────────────────────────────────────────────────────────────
 
     public fun tap(x: Float, y: Float): Unit = runBlocking {
         check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
@@ -81,6 +107,8 @@ public object DeviceProxy {
         actions.press(deviceKey)
     }
 
+    // ── App / window info ────────────────────────────────────────────────────
+
     public fun appStart(pkg: String, activity: String? = null): Unit = runBlocking {
         check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
         actions.appStart(pkg, activity)
@@ -96,6 +124,40 @@ public object DeviceProxy {
         check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
         actions.currentApp()
     }
+
+    // ── Shell / app management (Shizuku) ─────────────────────────────────────
+
+    public fun shell(command: String): ShellResult = runBlocking {
+        check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
+        shizuku.shell(command)
+    }
+
+    public fun appStop(pkg: String): Unit = runBlocking {
+        check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
+        shizuku.appStop(pkg)
+    }
+
+    public fun appClear(pkg: String): Unit = runBlocking {
+        check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
+        shizuku.appClear(pkg)
+    }
+
+    public fun appInstall(apkPath: String): Unit = runBlocking {
+        check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
+        shizuku.appInstall(apkPath)
+    }
+
+    public fun screencap(): ByteArray = runBlocking {
+        check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
+        shizuku.screencap()
+    }
+
+    public fun logcat(): String = runBlocking {
+        check(!isMainThread()) { "DeviceProxy must not be called from the main thread" }
+        shizuku.logcat()
+    }
+
+    // ── Internal ─────────────────────────────────────────────────────────────
 
     private fun parseSelector(enc: String): Selector {
         val colon = enc.indexOf(':')

@@ -70,3 +70,47 @@ class Device:
     def current_app(self):
         """Return the package name of the foreground app, or None."""
         return _Proxy.currentApp()
+
+    @_wrap_java_exception
+    def app_stop(self, pkg):
+        """Force-stop the app identified by package name (requires Shizuku)."""
+        _Proxy.appStop(pkg)
+
+    @_wrap_java_exception
+    def app_clear(self, pkg):
+        """Clear app data and cache (requires Shizuku)."""
+        _Proxy.appClear(pkg)
+
+    @_wrap_java_exception
+    def app_install(self, apk_path):
+        """Install an APK from the given path (requires Shizuku)."""
+        _Proxy.appInstall(apk_path)
+
+    @_wrap_java_exception
+    def shell(self, command):
+        """Run a shell command and return a dict with 'stdout', 'stderr', 'exit_code' (requires Shizuku)."""
+        result = _Proxy.shell(command)
+        return {'stdout': result.stdout, 'stderr': result.stderr, 'exit_code': result.exitCode}
+
+    @_wrap_java_exception
+    def screencap(self):
+        """Capture the screen and return JPEG bytes (requires Shizuku)."""
+        return bytes(_Proxy.screencap())
+
+    @_wrap_java_exception
+    def logcat(self):
+        """Return the last 500 lines of logcat output as a string (requires Shizuku)."""
+        return _Proxy.logcat()
+
+    @_wrap_java_exception
+    def repo(self, name):
+        """Look up a saved selector by friendly name from the Object Repository.
+
+        Returns an Element ready to interact with. Raises DroidPilotError if no
+        entry with the given name exists.
+
+        Example::
+
+            d.repo("Login button").click()
+        """
+        return Element(_Proxy.repo(str(name)))

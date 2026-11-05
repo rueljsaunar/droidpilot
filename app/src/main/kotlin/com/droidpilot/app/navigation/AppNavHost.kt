@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.droidpilot.feature.editor.EditorScreen
+import com.droidpilot.feature.inspector.InspectorScreen
+import com.droidpilot.feature.objectrepository.ui.ObjectRepositoryScreen
 import com.droidpilot.feature.projects.ui.ProjectListScreen
 import com.droidpilot.feature.projects.ui.ProjectSettingsScreen
 import com.droidpilot.feature.projects.ui.RunHistoryScreen
@@ -24,6 +26,9 @@ sealed class Route(val path: String) {
     object History : Route("history/{projectId}") {
         fun build(id: Long) = "history/$id"
     }
+    object AllHistory : Route("all-history")
+    object Inspector : Route("inspector")
+    object ObjectRepository : Route("object-repository")
 }
 
 @Composable
@@ -40,7 +45,19 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 onViewHistory = { id ->
                     navController.navigate(Route.History.build(id))
                 },
+                onShowAllHistory = {
+                    navController.navigate(Route.AllHistory.path)
+                },
+                onOpenInspector = {
+                    navController.navigate(Route.Inspector.path)
+                },
+                onOpenObjectRepository = {
+                    navController.navigate(Route.ObjectRepository.path)
+                },
             )
+        }
+        composable(Route.AllHistory.path) {
+            RunHistoryScreen(onNavigateUp = { navController.navigateUp() })
         }
         composable(
             Route.Editor.path,
@@ -76,6 +93,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             ),
         ) {
             RunHistoryScreen(onNavigateUp = { navController.navigateUp() })
+        }
+        composable(Route.Inspector.path) {
+            InspectorScreen(onNavigateUp = { navController.navigateUp() })
+        }
+        composable(Route.ObjectRepository.path) {
+            ObjectRepositoryScreen(onNavigateUp = { navController.navigateUp() })
         }
     }
 }
