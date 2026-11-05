@@ -19,6 +19,7 @@ android {
 }
 dependencies {
     implementation(project(":core:automation"))
+    implementation(project(":backend:shizuku"))
     implementation(libs.coroutines.android)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

@@ -22,6 +22,7 @@ detekt = "2.0.0-alpha.6"
 chaquopy = "17.2.0"
 room = "2.8.5"
 sora-editor = "0.23.6"
+shizuku = "13.1.5"
 
 [libraries]
 androidx-core = { module = "androidx.core:core", version.ref = "core" }
@@ -51,6 +52,8 @@ room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version = "1.2.0" }
+shizuku-api = { module = "dev.rikka.shizuku:api", version.ref = "shizuku" }
+shizuku-provider = { module = "dev.rikka.shizuku:provider", version.ref = "shizuku" }
 sora-editor = { module = "io.github.Rosemoe.sora-editor:editor", version.ref = "sora-editor" }
 sora-language-textmate = { module = "io.github.Rosemoe.sora-editor:language-textmate", version.ref = "sora-editor" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }

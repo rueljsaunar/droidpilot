@@ -156,29 +156,37 @@ Mark each item complete before committing a phase. All items in a phase must pas
 - [x] Room database: `RunRecord`, `TestRecord`, `LogEntry` with schema version 1
 - [x] `:feature:projects` run history tab: list runs, share report via FileProvider
 
-### Phase 6 – Shizuku Backend ☐
-- [ ] Shizuku API bound; state detected at startup; banner shown if unavailable
-- [ ] `app_start`, `app_stop`, `app_clear`, `app_install`, `shell(cmd)` implemented
-- [ ] `screencap` and `logcat -d` capture per test
-- [ ] Graceful fallback: `BackendUnavailableError` with setup instructions when Shizuku absent
-- [ ] Onboarding guide for Wireless Debugging + Shizuku
+### Phase 6 – Shizuku Backend ✅
+- [x] Shizuku API bound; state detected at startup; banner shown if unavailable
+- [x] `app_start`, `app_stop`, `app_clear`, `app_install`, `shell(cmd)` implemented
+- [x] `screencap` and `logcat -d` capture per test
+- [x] Graceful fallback: `BackendUnavailableError` with setup instructions when Shizuku absent
+- [x] Onboarding guide for Wireless Debugging + Shizuku
 
-### Phase 7 – Inspector & Object Repository ☐
-- [ ] Capture current screen snapshot from overlay
-- [ ] Screenshot with tappable element bounding boxes overlay
-- [ ] Hierarchy tree view; selecting node highlights box
-- [ ] Attribute panel: all relevant `AccessibilityNodeInfo` fields
-- [ ] Selector suggestion: most-stable selector ranked first
-- [ ] "Copy selector" and "Insert into editor" actions
-- [ ] `:feature:object-repository` module: Room entity `RepositoryEntry` (id, name, selector, selectorType, appPackage, screenLabel, screenshotPath, createdAt)
-- [ ] "Save to Repository" action on Inspector attribute panel; prompts for friendly name and screen label
-- [ ] Object Repository screen: list all saved entries, grouped by `screenLabel`
-- [ ] Expandable cards: show full selector string, selector type badge, app package
-- [ ] Search/filter entries by name, selector type, or screen label
-- [ ] Rename and delete entries; bulk-delete via multi-select
-- [ ] "Insert into editor" action: inserts the appropriate `dp.*()` call at the active editor cursor
-- [ ] "Copy selector" action: copies the raw selector string to clipboard
-- [ ] `d.repo("name")` Python API: retrieves a `Selector` from the repository by friendly name at runtime
+### Design – Terminal Blueprint Theme ✅
+- [x] `Color.kt`: `DpBackground #0D1117`, `DpPrimary #7B9EFF`, `DpGreen #52D68A`, `DpRed #FF6B6B`, `DpYellow #FFB347`, full palette matching mockup CSS variables
+- [x] `Typography.kt`: M3 type scale; `SansSerifFamily` (UI) + `MonospaceFamily` (code/logs)
+- [x] `Theme.kt`: fixed dark color scheme (no dynamic color); `LocalDpColors` composition local for extended colors; light fallback; `darkTheme` parameter
+- [x] `BlueprintBackground`: Canvas-drawn 32dp grid composable for screen backgrounds
+- [x] `StatusBadge`: PASS / FAILED / RUNNING / NO RUN pill composable with dot indicator
+- [x] All screens redesigned to match 8-screen mockup: HomeScreen, ProjectListScreen, RunHistoryScreen, EditorScreen, RunConsole, OverlayBubble
+
+### Phase 7 – Inspector & Object Repository ✅
+- [x] Capture current screen snapshot from overlay (`UiInspector` interface + `AccessibilityUiInspector` impl)
+- [ ] Screenshot with tappable element bounding boxes overlay (Phase 9 — requires MediaProjection)
+- [x] Hierarchy tree view; selecting node highlights box
+- [x] Attribute panel: all relevant `AccessibilityNodeInfo` fields
+- [x] Selector suggestion: most-stable selector ranked first (`UiNode.selectorCandidates`)
+- [x] "Copy selector" and "Insert into editor" actions
+- [x] `:feature:object-repository` module: Room entity `RepositoryEntry` (id, name, selector, selectorType, appPackage, screenLabel, screenshotPath, createdAt)
+- [x] "Save to Repository" action on Inspector attribute panel; prompts for friendly name and screen label
+- [x] Object Repository screen: list all saved entries, grouped by `screenLabel`
+- [x] Expandable cards: show full selector string, selector type badge, app package
+- [x] Search/filter entries by name, selector type, or screen label
+- [x] Rename and delete entries; bulk-delete via multi-select
+- [x] "Insert into editor" action: inserts the appropriate `dp.*()` call at the active editor cursor
+- [x] "Copy selector" action: copies the raw selector string to clipboard
+- [x] `d.repo("name")` Python API: retrieves a `Selector` from the repository by friendly name at runtime
 
 ### Phase 8 – Recorder ☐
 - [ ] Start/stop recording from overlay

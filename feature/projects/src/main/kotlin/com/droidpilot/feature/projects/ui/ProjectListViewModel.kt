@@ -3,9 +3,9 @@ package com.droidpilot.feature.projects.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.droidpilot.feature.projects.data.ProjectRepository
+import com.droidpilot.feature.projects.di.IoDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,9 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 public class ProjectListViewModel @Inject constructor(
     private val repo: ProjectRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     public val projects: StateFlow<List<com.droidpilot.feature.projects.data.ProjectEntity>> =
         repo.observeAll().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())

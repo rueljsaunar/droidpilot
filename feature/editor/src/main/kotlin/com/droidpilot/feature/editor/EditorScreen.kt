@@ -1,5 +1,7 @@
 package com.droidpilot.feature.editor
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -158,9 +160,55 @@ public fun EditorScreen(
             if (runOutput.isNotEmpty() || isRunning) {
                 RunConsole(
                     output = runOutput,
+                    isRunning = isRunning,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
+
+            // Status bar
+            StatusBar(
+                activeFilePath = tabs.getOrNull(activeTabIndex)?.path,
+                isDirty = tabs.getOrNull(activeTabIndex)?.isDirty == true,
+            )
         }
+    }
+}
+
+@Composable
+private fun StatusBar(activeFilePath: String?, isDirty: Boolean) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+    ) {
+        Text(
+            "Ln 1  Col 1",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            "│",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.outlineVariant,
+        )
+        Text(
+            "Python",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            "│",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.outlineVariant,
+        )
+        Text(
+            if (isDirty) "• Unsaved" else "✓ Saved",
+            style = MaterialTheme.typography.labelSmall,
+            color = if (isDirty) MaterialTheme.colorScheme.tertiary
+                    else MaterialTheme.colorScheme.secondary,
+        )
     }
 }
