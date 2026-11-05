@@ -22,6 +22,7 @@
 - No network permissions in any module at this phase
 - `./gradlew assembleDebug` and `./gradlew test` must both pass before the phase-0 commit
 - Lint: ktlint and detekt configured and passing (warnings allowed; errors block build)
+- **UI must look modern**: Material 3 components only, dynamic color on Android 12+, edge-to-edge layout, dark-theme-first — see CLAUDE.md § UI / Design for the full rule set; applies to every feature phase
 
 ---
 

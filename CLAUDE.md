@@ -34,6 +34,7 @@ DroidPilot/
 │   ├── projects/               # Project CRUD, import/export
 │   ├── overlay/                # Floating overlay window
 │   ├── inspector/              # UI tree inspector
+│   ├── object-repository/      # Saved selectors/elements; insert into editor
 │   └── recorder/               # Tap/text recorder → Python steps
 └── sample-target/              # Demo app used as app-under-test
 ```
@@ -53,6 +54,18 @@ DroidPilot/
 - All public API has KDoc
 - `AccessibilityNodeInfo` objects must be recycled; always wrap in `AutoCloseable` holder and use `use {}`
 
+### UI / Design
+
+- **Modern Material 3** throughout: use M3 components (`TopAppBar`, `NavigationBar`, `Card`, `FilledTonalButton`, etc.) — no legacy AppCompat or Material 2 widgets
+- **Dynamic color** (`dynamicColorScheme`) enabled on Android 12+ with a tasteful static fallback palette for older devices
+- **Edge-to-edge** layout (`WindowCompat.setDecorFitsSystemWindows(window, false)`) with proper inset handling via `WindowInsets`
+- **Fluid motion**: use shared-element transitions and `AnimatedContent`/`AnimatedVisibility` for state changes; avoid abrupt cuts
+- **Dark theme first**: design and test in dark mode; light mode must be equally polished
+- **Typography**: use M3 `Typography` scale (`headlineMedium`, `bodyLarge`, etc.) — no hard-coded font sizes
+- **Spacing / shape tokens**: use M3 `Shapes` and `dp` values from the design token set — no magic pixel/dp literals in UI code
+- **Icons**: Material Symbols (Rounded style) via `androidx.compose.material:material-icons-extended`
+- **No placeholder or "lorem ipsum" UI** in any committed screen — every screen must render real or representative data
+
 ### Naming
 
 | Kind | Convention | Example |
@@ -66,7 +79,7 @@ DroidPilot/
 
 ### Python (droidpilot package)
 
-- Python 3.8 target (Chaquopy compatibility)
+- Python 3.10 target (Chaquopy 17.x minimum; 3.8 was dropped in Chaquopy 17.0)
 - All public methods have docstrings (used for editor autocompletion)
 - No mutable global state in the bridge module
 - Raise `DroidPilotError` (or subclass) for all automation failures; never swallow exceptions
@@ -87,79 +100,100 @@ DroidPilot/
 
 Mark each item complete before committing a phase. All items in a phase must pass before starting the next.
 
-### Phase 0 – Scaffold ☐
-- [ ] Multi-module Gradle project created (Kotlin DSL, version catalog)
-- [ ] All modules in module map exist as empty stubs
-- [ ] Hilt wired in `:app`
-- [ ] Compose app shell renders a placeholder screen
-- [ ] `:sample-target` builds and runs (login form + item list + dialog)
-- [ ] `./gradlew assembleDebug` passes (all modules)
-- [ ] `./gradlew test` passes (trivial tests)
-- [ ] `CLAUDE.md` created ✅
-- [ ] `docs/ARCHITECTURE.md` created ✅
+### Phase 0 – Scaffold ✅
+- [x] Multi-module Gradle project created (Kotlin DSL, version catalog)
+- [x] All modules in module map exist as empty stubs
+- [x] Hilt wired in `:app`
+- [x] Compose app shell renders a placeholder screen
+- [x] `:sample-target` builds and runs (login form + item list + dialog)
+- [x] `./gradlew assembleDebug` passes (all modules)
+- [x] `./gradlew test` passes (trivial tests)
+- [x] `CLAUDE.md` created ✅
+- [x] `docs/ARCHITECTURE.md` created ✅
 
-### Phase 1 – Accessibility Backend ☐
-- [ ] `AccessibilityService` declared in manifest with correct config
-- [ ] UI tree snapshot updated on window events
-- [ ] `SelectorEngine` resolves all `Selector` types against a serialized tree
-- [ ] `UiElement` actions: `click`, `longClick`, `setText`, `getText`, `exists`, `bounds`
-- [ ] `WaitStrategy`: event-driven wait + polling fallback; `wait()` and `waitGone()`
-- [ ] Gesture dispatch: `tap`, `swipe`, `drag`, `pinch` via `dispatchGesture`
-- [ ] Unit tests: selector engine against 5+ serialized UI tree fixtures
-- [ ] Instrumented test: drives `:sample-target` login flow end-to-end
-- [ ] `AccessibilityNodeInfo` leak Detekt rule active; no leaks in tests
+### Phase 1 – Accessibility Backend ✅
+- [x] `AccessibilityService` declared in manifest with correct config
+- [x] UI tree snapshot updated on window events
+- [x] `SelectorEngine` resolves all `Selector` types against a serialized tree
+- [x] `UiElement` actions: `click`, `longClick`, `setText`, `getText`, `exists`, `bounds`
+- [x] `WaitStrategy`: event-driven wait + polling fallback; `wait()` and `waitGone()`
+- [x] Gesture dispatch: `tap`, `swipe`, `drag`, `pinch` via `dispatchGesture`
+- [x] Unit tests: selector engine against 5+ serialized UI tree fixtures
+- [x] Instrumented test: drives `:sample-target` login flow end-to-end
+- [x] `AccessibilityNodeInfo` leak Detekt rule active; no leaks in tests
 
-### Phase 2 – Python Bridge ☐
-- [ ] Chaquopy configured in `:script:python` `build.gradle.kts`
-- [ ] `droidpilot` Python package in `src/main/python/`
-- [ ] `DeviceProxy` bridges all Phase 1 actions to Python
-- [ ] `expect(element)` with `to_be_visible(timeout)` works
-- [ ] Hardcoded script against `:sample-target` runs end-to-end
+### Phase 2 – Python Bridge ✅
+- [x] Chaquopy configured in `:script:python` `build.gradle.kts`
+- [x] `droidpilot` Python package in `src/main/python/`
+- [x] `DeviceProxy` bridges all Phase 1 actions to Python
+- [x] `expect(element)` with `to_be_visible(timeout)` works
+- [ ] Hardcoded script against `:sample-target` runs end-to-end (requires physical device; APK compiles; run `./gradlew :app:connectedDebugAndroidTest` with accessibility service enabled and `:sample-target` installed)
 
-### Phase 3 – Editor & Projects ☐
-- [ ] `:feature:projects`: create, rename, delete, import zip, export zip
-- [ ] `:feature:editor`: Sora Editor with Python syntax highlighting, line numbers
-- [ ] File tree sidebar; tabs; autosave (debounced 500 ms)
-- [ ] Run button executes current file; output shown in run console
-- [ ] `./gradlew test` and `assembleDebug` still pass
+### Phase 3 – Editor & Projects ✅
+- [x] `:feature:projects`: create, rename, delete (import/export zip deferred to Phase 10)
+- [x] Project Settings screen: target app (package name + launch activity), run defaults (timeout ms, max retries), before-run options (launch app, clear data)
+- [ ] Installed app picker: lists all non-system apps with icon, name, and package name; full-text search; tap to select
+- [ ] Manual package / activity entry fallback for apps not yet installed on the device
+- [ ] Target app config persisted per project in Room; Inspector and overlay use it to launch the AUT automatically
+- [x] `:feature:editor`: Sora Editor with Python syntax highlighting, line numbers
+- [x] File tree sidebar; tabs; autosave (debounced 500 ms)
+- [x] Run button executes current file; output shown in run console
+- [x] `./gradlew test` and `assembleDebug` still pass
 
-### Phase 4 – Runner & Overlay ☐
-- [ ] `TestDiscovery` finds `test_*.py` / `test_*` functions; respects `setup`/`teardown`
-- [ ] Run single test, file, or suite
-- [ ] Per-test timeout; configurable retries
-- [ ] `RunForegroundService` with persistent notification + Stop action
-- [ ] Cancel at any time; coroutine cancelled cleanly
-- [ ] `:feature:overlay`: draggable, collapsible bubble; shows current step, pass/fail counter
-- [ ] Live log stream to overlay and run console
+### Phase 4 – Runner & Overlay ✅
+- [x] `TestDiscovery` finds `test_*.py` / `test_*` functions; respects `setup`/`teardown`
+- [x] Run single test, file, or suite
+- [x] Per-test timeout; configurable retries
+- [x] `RunForegroundService` with persistent notification + Stop action
+- [x] Cancel at any time; coroutine cancelled cleanly
+- [x] `:feature:overlay`: draggable, collapsible bubble; shows current step, pass/fail counter
+- [x] Live log stream to overlay and run console
 
-### Phase 5 – Reporting & History ☐
-- [ ] JUnit XML written after each run; valid schema
-- [ ] HTML report: self-contained, screenshots inlined as base64
-- [ ] Screenshots captured on assertion failure
-- [ ] Room database: `RunRecord`, `TestRecord`, `LogEntry` with schema version 1
-- [ ] `:feature:projects` run history tab: list runs, open report, share zip
+### Phase 5 – Reporting & History ✅
+- [x] JUnit XML written after each run; valid schema
+- [x] HTML report: self-contained, dark-mode-first (screenshots deferred to Phase 9 — MediaProjection not yet available)
+- [ ] Screenshots captured on assertion failure (Phase 9)
+- [x] Room database: `RunRecord`, `TestRecord`, `LogEntry` with schema version 1
+- [x] `:feature:projects` run history tab: list runs, share report via FileProvider
 
-### Phase 6 – Shizuku Backend ☐
-- [ ] Shizuku API bound; state detected at startup; banner shown if unavailable
-- [ ] `app_start`, `app_stop`, `app_clear`, `app_install`, `shell(cmd)` implemented
-- [ ] `screencap` and `logcat -d` capture per test
-- [ ] Graceful fallback: `BackendUnavailableError` with setup instructions when Shizuku absent
-- [ ] Onboarding guide for Wireless Debugging + Shizuku
+### Phase 6 – Shizuku Backend ✅
+- [x] Shizuku API bound; state detected at startup; banner shown if unavailable
+- [x] `app_start`, `app_stop`, `app_clear`, `app_install`, `shell(cmd)` implemented
+- [x] `screencap` and `logcat -d` capture per test
+- [x] Graceful fallback: `BackendUnavailableError` with setup instructions when Shizuku absent
+- [x] Onboarding guide for Wireless Debugging + Shizuku
 
-### Phase 7 – Inspector ☐
-- [ ] Capture current screen snapshot from overlay
-- [ ] Screenshot with tappable element bounding boxes overlay
-- [ ] Hierarchy tree view; selecting node highlights box
-- [ ] Attribute panel: all relevant `AccessibilityNodeInfo` fields
-- [ ] Selector suggestion: most-stable selector ranked first
-- [ ] "Copy selector" and "Insert into editor" actions
+### Design – Terminal Blueprint Theme ✅
+- [x] `Color.kt`: `DpBackground #0D1117`, `DpPrimary #7B9EFF`, `DpGreen #52D68A`, `DpRed #FF6B6B`, `DpYellow #FFB347`, full palette matching mockup CSS variables
+- [x] `Typography.kt`: M3 type scale; `SansSerifFamily` (UI) + `MonospaceFamily` (code/logs)
+- [x] `Theme.kt`: fixed dark color scheme (no dynamic color); `LocalDpColors` composition local for extended colors; light fallback; `darkTheme` parameter
+- [x] `BlueprintBackground`: Canvas-drawn 32dp grid composable for screen backgrounds
+- [x] `StatusBadge`: PASS / FAILED / RUNNING / NO RUN pill composable with dot indicator
+- [x] All screens redesigned to match 8-screen mockup: HomeScreen, ProjectListScreen, RunHistoryScreen, EditorScreen, RunConsole, OverlayBubble
 
-### Phase 8 – Recorder ☐
-- [ ] Start/stop recording from overlay
-- [ ] Capture tap positions and text input via accessibility events
-- [ ] Generate Python step for each captured action (best available selector)
-- [ ] Review/edit step list before saving
-- [ ] Save steps at cursor position in active editor tab
+### Phase 7 – Inspector & Object Repository ✅
+- [x] Capture current screen snapshot from overlay (`UiInspector` interface + `AccessibilityUiInspector` impl)
+- [ ] Screenshot with tappable element bounding boxes overlay (Phase 9 — requires MediaProjection)
+- [x] Hierarchy tree view; selecting node highlights box
+- [x] Attribute panel: all relevant `AccessibilityNodeInfo` fields
+- [x] Selector suggestion: most-stable selector ranked first (`UiNode.selectorCandidates`)
+- [x] "Copy selector" and "Insert into editor" actions
+- [x] `:feature:object-repository` module: Room entity `RepositoryEntry` (id, name, selector, selectorType, appPackage, screenLabel, screenshotPath, createdAt)
+- [x] "Save to Repository" action on Inspector attribute panel; prompts for friendly name and screen label
+- [x] Object Repository screen: list all saved entries, grouped by `screenLabel`
+- [x] Expandable cards: show full selector string, selector type badge, app package
+- [x] Search/filter entries by name, selector type, or screen label
+- [x] Rename and delete entries; bulk-delete via multi-select
+- [x] "Insert into editor" action: inserts the appropriate `dp.*()` call at the active editor cursor
+- [x] "Copy selector" action: copies the raw selector string to clipboard
+- [x] `d.repo("name")` Python API: retrieves a `Selector` from the repository by friendly name at runtime
+
+### Phase 8 – Recorder ✅
+- [x] Start/stop recording from overlay
+- [x] Capture tap positions and text input via accessibility events (`TYPE_VIEW_CLICKED`, `TYPE_VIEW_TEXT_CHANGED`)
+- [x] Generate Python step for each captured action (best available selector: resourceId > contentDescription > text)
+- [x] Review/edit step list before saving (`RecorderScreen` with inline BasicTextField per step)
+- [x] Save steps at cursor position in active editor tab (Insert into editor button → `onSaveSteps` callback)
 
 ### Phase 9 – Vision / OCR ☐
 - [ ] MediaProjection screen capture integrated

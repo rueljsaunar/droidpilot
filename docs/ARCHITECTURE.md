@@ -1,7 +1,7 @@
 # DroidPilot – Architecture & Implementation Plan
 
-**Last updated:** 2026-11-03  
-**Status:** Phase 0 – Under Review
+**Last updated:** 2026-11-04  
+**Status:** Phase 5 complete — Phases 0–5 shipped, Phase 6 (Shizuku) next
 
 ---
 
@@ -130,29 +130,33 @@ sealed class Selector {
 
 ### 3.5 `:runner`
 
-- `TestDiscovery`: scans project dir for `test_*.py`, collects `test_*` functions; respects `setup`/`teardown`
-- `TestExecutor`: runs tests on a background coroutine; streams `LogEvent` objects via `SharedFlow`
-- `RunSession`: holds run state; cancellable via `Job.cancel()`
-- `RunForegroundService`: wraps a run session; posts a persistent notification with a Stop action
-- Retry logic: configurable per-project; exponential back-off between retries
-- Timeout: per-test and global; cancels the coroutine and reports `TIMEOUT` status
+- `TestDiscovery`: regex-based JVM scan of `test_*.py` files; collects `def test_*` functions; detects `setup`/`teardown`; no Chaquopy required at discovery time
+- `TestExecutor`: `Flow<RunEvent>` pipeline; `withTimeout` + configurable retries per test
+- `RunRepository`: `@Singleton` Hilt component; two SharedFlows — `events(replay=100)` for overlay/console, `recordEvents(replay=0)` for `ReportRepository` to avoid stale-history re-processing; aggregates `isRunning`, `passCount`, `failCount`, `currentStep` StateFlows
+- `RunForegroundService`: `@AndroidEntryPoint`; `foregroundServiceType="dataSync"`; `ACTION_START`/`ACTION_STOP` intent API; passes `EXTRA_PROJECT_ID` + `EXTRA_PROJECT_DIR` to `runRepository.startRun()`
+- `RunConfig`: `timeoutMs`, `maxRetries`; defaults 30 s / 0 retries
+- `RunEvent` sealed interface: `RunStarted(projectId, projectDir)`, `TestStarted`, `TestPassed`, `TestFailed`, `StepLogged`, `RunComplete`
 
 ### 3.6 `:reporting`
 
-- `JUnitXmlWriter`: produces valid JUnit XML (compatible with CI tools and Android Studio)
-- `HtmlReportWriter`: self-contained HTML (all screenshots inlined as base64) — no external dependencies
-- `ScreenshotCapture`: hooks into the accessibility backend for regular screenshots; Shizuku for higher fidelity
-- Room database (`RunHistoryDatabase`): stores `RunRecord`, `TestRecord`, `LogEntry` entities; migration strategy from day one
+- **Room DB v1**: `RunRecord`, `TestRecord`, `LogEntry` with `CASCADE` FK deletes; KSP schema export to `reporting/schemas/`
+- `ReportingDao`: typed queries — runs by project (Flow), tests/logs by run (suspend)
+- `ReportRepository`: `@Singleton`; subscribes to `RunRepository.recordEvents` at app startup; accumulates in-memory per-run, writes to Room + files on `RunComplete`
+- `JunitXmlWriter`: valid JUnit XML grouped by classname (file basename); `<testsuites>` + `<testsuite>` + `<testcase>` with `<failure>` elements; UTF-8 escaped
+- `HtmlReportWriter`: dark-mode-first self-contained HTML; stat tiles, test result table, log section; no external dependencies; screenshot fields nullable (MediaProjection deferred to Phase 9)
+- Reports written to `filesDir/reports/{runId}/report.xml` and `report.html`; paths stored in `RunRecord`
+- `FileProvider` declared in manifest (`{packageName}.fileprovider`) exposes `filesDir/reports/` for sharing
 
 ### 3.7 Feature Modules
 
-| Module | Key screens / components |
-|--------|--------------------------|
-| `:feature:projects` | Project list, create/rename/delete/import/export dialogs |
-| `:feature:editor` | File tree, tab bar, Sora Editor view, run button, console panel |
-| `:feature:overlay` | `TYPE_APPLICATION_OVERLAY` window; Run/Stop, step counter, pass/fail; collapsible bubble |
-| `:feature:inspector` | Screenshot with tappable element boxes + hierarchy tree; attribute panel; "insert selector" action |
-| `:feature:recorder` | Tap/type capture via accessibility events; step list; generate + review Python steps |
+| Module | Key screens / components | Status |
+|--------|--------------------------|--------|
+| `:feature:projects` | Project list (CRUD, rename, delete), project settings (target app, run config), run history (per-project list of runs with share action) | ✅ Phase 3+5 |
+| `:feature:editor` | File tree sidebar, tab bar + autosave (500 ms debounce), Sora Editor with Python TextMate grammar, run button, run console panel | ✅ Phase 3 |
+| `:feature:overlay` | `TYPE_APPLICATION_OVERLAY` via `WindowManager`; collapsible/draggable bubble; live step, pass/fail counters; `OverlayLifecycleOwner` for hosted `ComposeView` | ✅ Phase 4 |
+| `:feature:inspector` | Screenshot with tappable element boxes + hierarchy tree; attribute panel; "insert selector" action | ⬜ Phase 7 |
+| `:feature:object-repository` | Saved selectors; `RepositoryEntry` Room entity; search/filter; insert into editor | ⬜ Phase 7 |
+| `:feature:recorder` | Tap/type capture via accessibility events; step list; generate + review Python steps | ⬜ Phase 8 |
 
 ---
 
@@ -162,38 +166,36 @@ sealed class Selector {
 User taps "Run" in editor
          │
          ▼
-  :runner TestExecutor
-         │  starts foreground service
-         │  launches coroutine
+  EditorViewModel.runCurrentFile()
+         │  calls RunRepository.startRun(projectId, projectDir)
+         │  emits RunEvent.RunStarted
+         │  calls ScriptRunner.executeCapturingOutput(script)
          ▼
   :script:python (Chaquopy)
-    executes test_*.py on Python thread
+    executes Python on Chaquopy thread; stdout/stderr captured
+         │
+         ▼  (or via RunForegroundService for full suites)
+  TestExecutor.execute(tests, config): Flow<RunEvent>
+         │  withTimeout + retries per test
+         ▼
+  ScriptRunner.executeCapturingOutput(buildScript(testCase))
+    builds Python that imports & calls the test function
          │
          ▼
-  droidpilot Python module
-    calls DeviceProxy methods
-         │  (JNI bridge)
-         ▼
-  :core:automation DeviceActions impl
-         │  dispatches to active backend(s)
-    ┌────┴────┐
-    ▼         ▼
-accessibility  shizuku
-backend        backend
-    │         │
-    └────┬────┘
-         │  emits LogEvent via SharedFlow
-         ▼
-  RunSession aggregates events
-         │
-    ┌────┴────┐
-    ▼         ▼
-  overlay   run console
-  (live)    (in editor)
-         │
-         ▼  (on completion)
-  :reporting writes JUnit XML + HTML
-  Room stores RunRecord
+  RunRepository.emit(event)
+    ├── _events (replay=100) ──────────────────────┐
+    │                                               ▼
+    │                                    OverlayService  (live bubble)
+    │                                    EditorScreen    (run console)
+    │
+    └── _recordEvents (replay=0) ─────────────────▶ ReportRepository
+                                                      accumulates per-run
+                                                      ▼ on RunComplete
+                                                    Room (RunRecord, TestRecord, LogEntry)
+                                                    JunitXmlWriter → filesDir/reports/{id}/report.xml
+                                                    HtmlReportWriter → filesDir/reports/{id}/report.html
+                                                      ▼
+                                                    RunHistoryScreen (share via FileProvider)
 ```
 
 ---
@@ -263,22 +265,24 @@ A `RunForegroundService` is started before every test run. This prevents the OS 
 
 ---
 
-## 7. Dependency Versions (to be verified before adding)
+## 7. Dependency Versions (locked in `gradle/libs.versions.toml`)
 
-> Versions will be confirmed against current stable releases before each is added to the version catalog. The following are approximate targets based on knowledge as of late 2025; do **not** use without verification.
+| Dependency | Version in use | Introduced |
+|-----------|----------------|-----------|
+| Android Gradle Plugin | 9.4.0 | Phase 0 |
+| Kotlin | 2.3.21 | Phase 0 |
+| KSP | 2.3.9 | Phase 0 |
+| Compose BOM | 2026.09.00 | Phase 0 |
+| Hilt | 2.60.1 | Phase 0 |
+| Navigation Compose | 2.9.8 | Phase 0 |
+| Coroutines | 1.11.0 | Phase 0 |
+| Chaquopy | 17.2.0 | Phase 2 |
+| Sora Editor | 0.23.6 | Phase 3 |
+| Room | 2.8.5 | Phase 3 (projects DB), Phase 5 (reporting DB) |
+| Shizuku API | TBD | Phase 6 |
+| ML Kit Text Recognition | TBD | Phase 9 |
 
-| Dependency | Approx target | Verified in phase |
-|-----------|--------------|-------------------|
-| Android Gradle Plugin | 8.x | Phase 0 |
-| Kotlin | 2.x | Phase 0 |
-| Compose BOM | Latest stable | Phase 0 |
-| Hilt | 2.5x | Phase 0 |
-| Chaquopy | 16.x | Phase 2 |
-| Shizuku API | 13.x | Phase 6 |
-| Sora Editor | 0.23.x | Phase 3 |
-| ML Kit Text Recognition | 16.x | Phase 9 |
-| Room | 2.6.x | Phase 5 |
-| Kotlin Coroutines | 1.9.x | Phase 0 |
+Verify new versions at the sources listed in `CLAUDE.md` before adding any library.
 
 ---
 

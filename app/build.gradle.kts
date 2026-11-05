@@ -1,0 +1,55 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.chaquopy)
+}
+android {
+    namespace = "com.droidpilot.app"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+    defaultConfig {
+        applicationId = "com.droidpilot.app"
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = 1
+        versionName = "0.1.0"
+        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildFeatures { compose = true }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}
+dependencies {
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons.extended)
+    implementation(libs.compose.ui.tooling.preview)
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.navigation.compose)
+    implementation(libs.coroutines.android)
+    implementation(libs.androidx.core)
+    implementation(libs.shizuku.api)
+    implementation(project(":backend:accessibility"))
+    implementation(project(":backend:shizuku"))
+    implementation(project(":script:python"))
+    implementation(project(":runner"))
+    implementation(project(":feature:projects"))
+    implementation(project(":feature:editor"))
+    implementation(project(":feature:overlay"))
+    implementation(project(":feature:inspector"))
+    implementation(project(":feature:object-repository"))
+    implementation(project(":feature:recorder"))
+    implementation(project(":reporting"))
+    implementation(libs.activity.compose)
+    testImplementation(libs.junit)
+    testImplementation(libs.hilt.android)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+}

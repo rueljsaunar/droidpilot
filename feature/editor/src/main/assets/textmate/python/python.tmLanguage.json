@@ -1,0 +1,96 @@
+{
+  "name": "Python",
+  "scopeName": "source.python",
+  "fileTypes": ["py"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#fstring" },
+    { "include": "#string-triple-double" },
+    { "include": "#string-triple-single" },
+    { "include": "#string-double" },
+    { "include": "#string-single" },
+    { "include": "#builtin-exception" },
+    { "include": "#builtin-function" },
+    { "include": "#keyword" },
+    { "include": "#decorator" },
+    { "include": "#function-def" },
+    { "include": "#class-def" },
+    { "include": "#constant" },
+    { "include": "#number" }
+  ],
+  "repository": {
+    "comment": {
+      "name": "comment.line.number-sign.python",
+      "match": "#.*$"
+    },
+    "string-triple-double": {
+      "name": "string.quoted.triple.double.python",
+      "begin": "\"\"\"",
+      "end": "\"\"\"",
+      "patterns": [{ "include": "#string-escape" }]
+    },
+    "string-triple-single": {
+      "name": "string.quoted.triple.single.python",
+      "begin": "'''",
+      "end": "'''",
+      "patterns": [{ "include": "#string-escape" }]
+    },
+    "string-double": {
+      "name": "string.quoted.double.python",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [{ "include": "#string-escape" }]
+    },
+    "string-single": {
+      "name": "string.quoted.single.python",
+      "begin": "'",
+      "end": "'",
+      "patterns": [{ "include": "#string-escape" }]
+    },
+    "fstring": {
+      "name": "string.interpolated.python",
+      "begin": "f\"",
+      "end": "\"",
+      "patterns": [
+        { "name": "meta.embedded.python", "begin": "\\{", "end": "\\}" },
+        { "include": "#string-escape" }
+      ]
+    },
+    "string-escape": {
+      "name": "constant.character.escape.python",
+      "match": "\\\\."
+    },
+    "keyword": {
+      "name": "keyword.control.python",
+      "match": "\\b(and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|not|or|pass|raise|return|try|while|with|yield)\\b"
+    },
+    "constant": {
+      "name": "constant.language.python",
+      "match": "\\b(True|False|None|self|cls)\\b"
+    },
+    "decorator": {
+      "name": "entity.name.decorator.python",
+      "match": "@[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*"
+    },
+    "function-def": {
+      "name": "entity.name.function.python",
+      "match": "(?<=def\\s)([a-zA-Z_][a-zA-Z0-9_]*)"
+    },
+    "class-def": {
+      "name": "entity.name.class.python",
+      "match": "(?<=class\\s)([a-zA-Z_][a-zA-Z0-9_]*)"
+    },
+    "builtin-function": {
+      "name": "support.function.builtin.python",
+      "match": "\\b(abs|all|any|bin|bool|breakpoint|bytearray|bytes|callable|chr|classmethod|compile|complex|delattr|dict|dir|divmod|enumerate|eval|exec|filter|float|format|frozenset|getattr|globals|hasattr|hash|help|hex|id|input|int|isinstance|issubclass|iter|len|list|locals|map|max|memoryview|min|next|object|oct|open|ord|pow|print|property|range|repr|reversed|round|set|setattr|slice|sorted|staticmethod|str|sum|super|tuple|type|vars|zip)\\b"
+    },
+    "builtin-exception": {
+      "name": "support.type.exception.python",
+      "match": "\\b(Exception|ValueError|TypeError|KeyError|IndexError|AttributeError|NameError|OSError|IOError|RuntimeError|StopIteration|GeneratorExit|SystemExit|KeyboardInterrupt|NotImplementedError|AssertionError|TimeoutError|DroidPilotError)\\b"
+    },
+    "number": {
+      "name": "constant.numeric.python",
+      "match": "\\b(0x[0-9A-Fa-f]+|0o[0-7]+|0b[01]+|[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?)\\b"
+    }
+  }
+}
